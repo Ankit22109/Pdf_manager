@@ -1,40 +1,31 @@
 package com.example.pdf_manager;
 
+
 import android.content.Intent;
 import android.graphics.Bitmap;
+
 import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
+import android.util.Log;
 import android.widget.ImageView;
-
 import android.widget.Toast;
-
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
 import java.io.File;
-import java.io.FileNotFoundException;
-
 import java.io.IOException;
+import java.util.Objects;
+
+
 
 public class OpenFile extends AppCompatActivity {
     private static final int page_index = 1;
 
-    private void FileSelector() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("*/*");
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
 
-        try {
-            startActivityForResult(intent, 101);
-        } catch (Exception e) {
-            Toast.makeText(this, "Please install file manager", Toast.LENGTH_SHORT).show();
-        }
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,42 +40,47 @@ public class OpenFile extends AppCompatActivity {
         Intent intent = getIntent();
 
         Uri uri = Uri.parse(intent.getStringExtra("Uri"));
-        String path = uri.getPath();
-        File file = new File(path);
+//        String path = uri.getPath();
+        File file = new File(Objects.requireNonNull(uri.getPath()));
 //        File destination = new File(file.getPath());
         try {
-            Open(file);
+            Open(file, uri);
         } catch (IOException e) {
             Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
             throw new RuntimeException(e);
         }
 
     }
+    final static int height = 100;
+    final static int width = 100;
 
+    private  void Open(File file, Uri uri) throws IOException {
 
-    private  void Open(File file) throws IOException {
-//        Toast.makeText(this, file.toString(), Toast.LENGTH_LONG).show();
-        ImageView ImgView = findViewById(R.id.ImgView);
+//
         try {
-            ParcelFileDescriptor FD = new ParcelFileDescriptor(ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY));
-            PdfRenderer render = new PdfRenderer(FD);
+            ImageView ImgView = findViewById(R.id.ImgView);
+           /* ParcelFileDescriptor FD = new ParcelFileDescriptor(ParcelFileDescriptor.open(file,
+                    ParcelFileDescriptor.MODE_READ_ONLY)); */
+            ParcelFileDescriptor descriptor = getContentResolver().openFileDescriptor(uri, "r");
 
-            PdfRenderer.Page page  = render.openPage(page_index);
+            PdfRenderer render = new PdfRenderer(descriptor);
 
-
-            Bitmap bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_4444);
+            PdfRenderer.Page page = render.openPage(page_index);
+            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
+
             ImgView.setImageBitmap(bitmap);
+
             page.close();
             render.close();
-
-        }catch(FileNotFoundException e){
-            Toast.makeText(this, e + file.toString(), Toast.LENGTH_LONG).show();
+        }
+        catch(Exception e){
+            Log.e("Error:", String.valueOf(e.getMessage()));
             e.printStackTrace();
         }
 
-//        page.close();
-//        render.close();
+
+
     }
 
 

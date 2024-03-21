@@ -47,12 +47,15 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton create_btn = findViewById(R.id.create);
         FloatingActionButton edit_btn = findViewById(R.id.edit);
 
+        makePermissonRequest();
+
         edit_btn.setOnClickListener(v ->{
             FileSelector();
 
         });
 
         create_btn.setOnClickListener(v ->{
+
             CreateFile();
         });
 
@@ -103,8 +106,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void FileSelector() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("*/*");
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.setType("application/pdf");
+//        intent.hasFileDescriptors();
         intent.addCategory(Intent.CATEGORY_OPENABLE);
 
         try {
@@ -121,8 +125,12 @@ public class MainActivity extends AppCompatActivity {
         if (resultCode == 101 && requestCode == Activity.RESULT_OK && data != null) {
 
             Uri uri = data.getData();
+            assert uri != null;
 //            String path = uri.getPath();
-//            File file = new File(path);
+            File file = new File(uri.getPath());
+            Log.i("File:", file.toString());
+
+            Log.v("IsExist:", file.exists() ? "Found" : "Failed");
 
             Intent send = new Intent(getApplicationContext(), OpenFile.class);
             send.putExtra("Uri", uri.toString());
@@ -130,44 +138,16 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(send, 102);
 
 
+               
+
+
+
             }
         if (resultCode == 103 && requestCode == Activity.RESULT_OK && data != null) {
             Uri uri = data.getData();
-            String path = uri.getPath();
-            File file = new File(path);
-            Paint title = new Paint();
-            // create a new document
-            PdfDocument document = new PdfDocument();
 
-            // create a page description
-            PageInfo pageInfo = new PageInfo.Builder(100, 100, 1).create();
 
-            title.setTextSize(18);
-            title.setColor(ContextCompat.getColor(this, R.color.black));
-            title.setTextAlign(Paint.Align.CENTER);
 
-            // start a page
-            Page page = document.startPage(pageInfo);
-            Canvas canvas = page.getCanvas();
-
-            canvas.drawText("This is sample document which we have created.", 396, 560, title);
-            // draw something on the page
-//            View content = getContentView();
-//            content.draw(page.getCanvas());
-
-            // finish the page
-            document.finishPage(page);
-
-            // write the document content
-            try {
-                document.writeTo(new FileOutputStream(file));
-            } catch (IOException e) {
-                Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
-                throw new RuntimeException(e);
-            }
-
-            // close the document
-            document.close();
 
         }
 
@@ -188,9 +168,5 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
         }
     }
-
-
-
-
 
 }
