@@ -12,27 +12,14 @@ import androidx.core.content.ContextCompat;
 
 import android.app.Activity;
 import android.content.pm.PackageManager;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.DocumentsContract;
 import android.util.Log;
-import android.view.View;
-
 import android.content.Intent;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.graphics.pdf.PdfDocument;
-import android.graphics.pdf.PdfDocument.*;
-
-import com.example.pdf_manager.databinding.ActivityMainBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.FileOutputStream;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -47,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton create_btn = findViewById(R.id.create);
         FloatingActionButton edit_btn = findViewById(R.id.edit);
 
-        makePermissonRequest();
+        makePermissionRequest();
 
         edit_btn.setOnClickListener(v ->{
             FileSelector();
@@ -55,14 +42,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
         create_btn.setOnClickListener(v ->{
-
             CreateFile();
         });
 
 
     }
 
-    private void makePermissonRequest(){
+    private void makePermissionRequest(){
         if(checkPermission()){
             Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
         }else{
@@ -107,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void FileSelector() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intent.setType("application/pdf");
+        intent.setType("*/*");
 //        intent.hasFileDescriptors();
         intent.addCategory(Intent.CATEGORY_OPENABLE);
 
@@ -126,11 +112,10 @@ public class MainActivity extends AppCompatActivity {
 
             Uri uri = data.getData();
             assert uri != null;
-//            String path = uri.getPath();
-            File file = new File(uri.getPath());
-            Log.i("File:", file.toString());
 
-            Log.v("IsExist:", file.exists() ? "Found" : "Failed");
+            File file = new File(uri.getPath());
+
+
 
             Intent send = new Intent(getApplicationContext(), OpenFile.class);
             send.putExtra("Uri", uri.toString());
@@ -166,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(intent, 103);
         } catch (Exception e) {
             Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
+            // TODO Make Create Pdf function
         }
     }
 
