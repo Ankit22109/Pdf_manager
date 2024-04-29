@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".MainActivity">
 
 
@@ -24,15 +25,22 @@
         android:id="@+id/edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@color/white"
         android:clickable="true"
+        android:foregroundTint="@color/white"
+        android:theme="@style/TextAppearance.AppCompat.Widget.Button"
+        android:tint="@color/white"
+        android:tintMode="multiply"
+        android:verticalScrollbarPosition="defaultPosition"
+        android:visibility="visible"
+        app:backgroundTint="#F3BCBC"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.087"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.041"
-        app:srcCompat="@android:drawable/ic_menu_edit" />
-
+        app:srcCompat="@drawable/open_file_folder_svgrepo_com" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

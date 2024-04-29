@@ -33,15 +33,24 @@ android {
         viewBinding = true
     }
     dependenciesInfo {
-        includeInApk = false
-        includeInBundle = false
+        includeInApk = true
+        includeInBundle = true
     }
     buildToolsVersion = "34.0.0"
+    sourceSets {
+        getByName("main") {
+            assets {
+                srcDirs("src\\main\\assets", "src\\main\\assets")
+            }
+        }
+    }
+    buildFeatures{
+        viewBinding = true
+    }
 }
 
 dependencies {
-
-    implementation("com.squareup.picasso:picasso:2.71828")
+    implementation("com.github.barteksc:android-pdf-viewer:3.2.0-beta.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
